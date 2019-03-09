@@ -1,13 +1,14 @@
 const Express = require("express");
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser"); // to work with req.body
 const path = require("path");
-const session = require("express-session");
-const cors = require("cors");
-//const express = express();
+const fs = require("fs");
+//const session = require("express-session");
+const cors = require("cors"); // cross domain
+const morgan = require("morgan"); // logging
 
 const USR = require("./auth/authUser");
 //console.log(USR);
-console.log(USR.email);
+//console.log(USR.email);
 
 const port = process.env.PORT || 5001;
 require("./utils/loadEnv"); // Get DB and Yahoo creds
@@ -21,12 +22,14 @@ console.log("dbURL", process.env.DB_CONNECT);
 //Configure isProduction variable
 const isProduction = process.env.NODE_ENV === "production";
 
+// create a write stream (in append mode)
+const logfile = fs.createWriteStream(path.join(__dirname, "morgan.log"), { flags: "a" });
+
 Express()
   .use(cors())
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
-  .use(session({ secret: "wpp-scrape-server", cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }))
-
+  .use(morgan("combined", { stream: logfile }))
   .get("/api", (req, res) => {
     res.send({ express: "nothing here: try GET api/hello | POST api/world" });
   })
@@ -46,6 +49,14 @@ Express()
         console.log(e);
         next(e);
       });
+  })
+
+  .post("/api/login", (req, res) => {
+    const { useremail, password } = req.body;
+    console.log("SRV GOT", useremail, password);
+    res.data = req.body;
+    res.data2 = { thing1: "1", thing2: "2" };
+    res.json(req.params);
   })
 
   .post("/api/world", (req, res) => {
