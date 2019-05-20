@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 //const session = require("express-session");
 const cors = require("cors"); // cross domain
-const morgan = require("morgan"); // logging
+//const morgan = require("morgan"); // logging
 
 const USR = require("./auth/authUser");
 //console.log(USR);
@@ -23,7 +23,9 @@ console.log("dbURL", process.env.DB_CONNECT);
 const isProduction = process.env.NODE_ENV === "production";
 
 // create a write stream (in append mode)
-const logfile = fs.createWriteStream(path.join(__dirname, "morgan.log"), { flags: "a" });
+const logfile = fs.createWriteStream(path.join(__dirname, "morgan.log"), {
+  flags: "a"
+});
 
 Express()
   .use(cors())
@@ -61,7 +63,9 @@ Express()
 
   .post("/api/world", (req, res) => {
     console.log(req.body);
-    res.send(`I received your POST request. This is what you sent me: ${req.body.post}`);
+    res.send(
+      `I received your POST request. This is what you sent me: ${req.body.post}`
+    );
   })
 
   .listen(port, () => console.log(`Scraper server started on ${port}`));
