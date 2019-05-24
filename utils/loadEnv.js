@@ -2,7 +2,7 @@
 (() => {
   const res = require("dotenv").config({ path: "../client/.env" });
   if (res.error) {
-    console.warn("OH CRAP no env");
+    console.warn("Rats.... no env");
     throw res.error;
   }
 
@@ -19,4 +19,4 @@
   console.warn("EXPRESS Environment loaded OK");
 })();
 
-//DJM I only made this an Immediately invoked async func to prove that I can. Still needs some thought...I can't seem to require() with await
+//DJM made this an IIFE
