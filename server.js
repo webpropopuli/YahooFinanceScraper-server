@@ -17,13 +17,16 @@ const { sweeper } = require("./db/sweeper");
 
 //const yahooUsr = process.env.YAHOO_USR;
 //const yahooPwd = process.env.YAHOO_PWD;
-console.log("dbURL", process.env.DB_CONNECT);
+//console.log("dbURL", process.env.DB_CONNECT);
 
 //Configure isProduction variable
 const isProduction = process.env.NODE_ENV === "production";
 
 // create a write stream (in append mode)
 const logfile = fs.createWriteStream(path.join(__dirname, "morgan.log"), { flags: "a" });
+
+//! this is DB mock
+const userList = [];
 
 Express()
   .use(cors())
@@ -42,7 +45,7 @@ Express()
     const dbInfo = { db: "scraper1", coll: "snapshots" };
     sweeper({ db: "scraper1", coll: "snapshots" })
       .then(data => {
-        console.log(data); //# THE PAYLOAD!
+        //console.log(data); //# THE PAYLOAD!
         res.json(data);
       })
       .catch(e => {
@@ -53,12 +56,26 @@ Express()
 
   .post("/api/login", (req, res) => {
     const { useremail, password } = req.body;
-    console.log("SRV GOT", useremail, password);
-    res.data = req.body;
-    res.data2 = { thing1: "1", thing2: "2" };
-    res.json(req.params);
+
+    //tbd look up user
+    //tbd set the data
+    let retData = { userName: "DavidM", userValid: true };
+    res.json(retData);
   })
 
+  //#REGISTER  accept name, email and pwd; return OK|USEREMAILEXISTS
+  .post("/api/register", (req, res) => {
+    const { email, password, name } = req.body;
+
+    //Add user to db  //TBD do it for real
+    userList.push(req.body);
+    console.log("SRV Total users/last user: ", userList.length, userList[userList.length - 1]);
+    //tbd set the data
+    let retData = { userAdded: true }; //tbd handle errors
+    res.json(retData);
+  })
+
+  //# /world  (testing POST - unused)
   .post("/api/world", (req, res) => {
     console.log(req.body);
     res.send(`I received your POST request. This is what you sent me: ${req.body.post}`);
